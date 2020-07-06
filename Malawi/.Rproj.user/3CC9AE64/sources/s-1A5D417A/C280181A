@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1593740362230.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "C280181A",
+    "lastKnownWriteTime" : 1593792574,
+    "last_content_update" : 1593792574520,
+    "path" : "C:/Program Files/R/projects/Malawi/Malawi_ordination.R",
+    "project_path" : "Malawi_ordination.R",
+    "properties" : {
+        "cursorPosition" : "51,37",
+        "scrollLine" : "37",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
