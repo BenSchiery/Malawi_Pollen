@@ -3,6 +3,7 @@ graphics.off()
 
 library(vegan)
 library(MASS)
+
 # load the pollen data
 poln.full <- read.csv("./data/20200626_pollen.csv")
 
@@ -36,23 +37,32 @@ to.be.fit.std <- scale(x = to.be.fit)
 
 # make distance matrices
 poln.dist <- dist(poln.std)
-#poln.dist <- vegdist(poln, method = "canberra")
-
-# don't need this. The "to be fit data" does not need to be a D matrix.
-#to.be.fit.dist <- dist(to.be.fit.std, method = "canberra")
+# poln.dist <- vegan::vegdist(poln, method = "canberra")
 
 # make the pollen ordination
 poln.ord <- cmdscale(d = poln.dist, k = 2, eig = T, add = F, x.ret = F)
 
-#############################
+##########################################
 #	NMDS
-poln.ord<- metaMDS(poln.ord$points, k=2, distance='euclidean', autotransform=F)
-#poln.ord<-isoMDS(poln.dist, y = cmdscale(d = poln.dist, k = 2, eig = T, add = F, x.ret = F)$points, k = 2, maxit = 50, trace = TRUE,
-#       tol = 1e-3, p = 2)
+poln.ord <- vegan::metaMDS(comm = poln.ord$points, 
+                           k = 2, 
+                           distance = 'euclidean', 
+                           autotransform = F)
+# poln.ord <- MASS::isoMDS(d = poln.dist, 
+#                          y = cmdscale(d = poln.dist,
+#                                       k = 2, 
+#                                       eig = T, 
+#                                       add = F, 
+#                                       x.ret = F)$points, 
+#                          k = 2, 
+#                          maxit = 50,
+#                          trace = TRUE,
+#                          tol = 1e-3, 
+#                          p = 2)
 
-#Shepard(poln.dist, poln.ord, p = 2)
+# MASS::Shepard(d = poln.dist, y = poln.ord, p = 2)
 
-###########################
+##########################################
 
 # do the vector fit(s) of the data to our ordination
 poln.fit <- vegan::envfit(ord = poln.ord,
@@ -62,20 +72,72 @@ add.fit <- vegan::envfit(ord = poln.ord,
                          env = to.be.fit.std,
                          permutaions = 10000)
 
-# plot the results of the vector fits
-  # color ages > 400 in red
-    col<-rep("black", length(age))
-    col[which(age>=400)]<-"red"
 ##########################################
-plot(poln.ord$points, pch = 16, type="n")
+
+# plot the results of the vector fits
+## color ages > 400 in red
+col <- c("black", "red")[1 + (age >= 400)]
+
+plot(poln.ord$points, pch = 16, type = "n")
 plot(poln.fit, col = "red")
 plot(add.fit, col = "blue")
-text(poln.ord$points, labels=round(age), cex=.5, col=col)
-# ordination surfaces
-# ordisurf(x = poln.ord, y = age, main = "Age (kyr)", add=TRUE, col="orange", nlevels = 50
-#         , knots=300)
-# ordisurf(x = poln.ord, y = char, main = "Charcoal", add=TRUE, col="gray", nlevels = 50)
-ordisurf(x = poln.ord, y = lake, main = "Lake Level", add=TRUE, col="orange", nlevels = 50
-         , knots=30)
-#ordisurf(x = poln.ord, y = astr, main = "Asteraceae")
+text(poln.ord$points, labels = round(age), cex = 0.5, col = col)
+
+## ordination surfaces
+# vegan::ordisurf(x = poln.ord,
+#                 y = age,
+#                 main = "Age (kyr)",
+#                 add = TRUE,
+#                 col = "orange",
+#                 nlevels = 50,
+#                 knots = 300)
+# vegan::ordisurf(x = poln.ord,
+#                 y = char,
+#                 main = "Charcoal",
+#                 add = TRUE,
+#                 col = "gray",
+#                 nlevels = 50)
+vegan::ordisurf(x = poln.ord, y = lake,
+                main = "Lake Level", 
+                add = TRUE, 
+                col = "orange", 
+                nlevels = 50, 
+                knots = 30)
+# vegan::ordisurf(x = poln.ord,
+#                 y = astr,
+#                 main = "Asteraceae")
+
+##########################################
+# MANOVA
+
+# our raw data are pollen, charcoal, and lake level
+data.raw <- data.frame(poln, char, lake)
+
+# scale the raw data
+data.scl <- scale(data.raw)
+
+# calculate the euclidean distance matrix of our scaled data
+data.scl.dist <- dist(data.scl) 
+
+# perform our PCoA on the distance matrix and keep the eigenvalues
+data.scl.dist.pcoa <- cmdscale(d = data.scl.dist, k = 2, eig = T)
+data.scl.dist.pcoa.eig <- data.scl.dist.pcoa$eig
+
+# find the euclidean distance matrix of the resulting points
+data.scl.dist.pcoa.dist <- vegan::vegdist(x = data.scl.dist.pcoa$points,
+                                          method = "euclidean")
+
+# binary indicator of age
+age.gt.85 <- 0 + (age > 85)
+
+# perform the MANOVA
+poln.manova <- vegan::adonis(formula = data.scl.dist.pcoa.dist ~ age.gt.85,
+                             method = "euclidean")
+
+poln.manova
+
+
+
+
+
 
