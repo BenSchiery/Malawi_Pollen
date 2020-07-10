@@ -40,14 +40,16 @@ poln.dist <- dist(poln.std)
 # poln.dist <- vegan::vegdist(poln, method = "canberra")
 
 # make the pollen ordination
-poln.ord <- cmdscale(d = poln.dist, k = 2, eig = T, add = F, x.ret = F)
+poln.ord <- cmdscale(d = poln.dist, k = 4, eig = T, add = F, x.ret = F)
+
+var.expl<-poln.ord$eig[1:3]/sum(poln.ord$eig[1:3])
 
 ##########################################
 #	NMDS
-poln.ord <- vegan::metaMDS(comm = poln.ord$points, 
-                           k = 2, 
-                           distance = 'euclidean', 
-                           autotransform = F)
+# poln.ord <- vegan::metaMDS(comm = poln.ord$points, 
+#                            k = 2, 
+#                            distance = 'euclidean', 
+#                            autotransform = F)
 # poln.ord <- MASS::isoMDS(d = poln.dist, 
 #                          y = cmdscale(d = poln.dist,
 #                                       k = 2, 
@@ -76,12 +78,18 @@ add.fit <- vegan::envfit(ord = poln.ord,
 
 # plot the results of the vector fits
 ## color ages > 400 in red
-col <- c("black", "red")[1 + (age >= 400)]
+col <- c("gray", "red")[1 + (age >= 85)]
 
-plot(poln.ord$points, pch = 16, type = "n")
-plot(poln.fit, col = "red")
-plot(add.fit, col = "blue")
-text(poln.ord$points, labels = round(age), cex = 0.5, col = col)
+main<-"PCoA of Pollen: pollen and independent vectors fitted onto ordination"
+plot(poln.ord$points, pch = 21, type = "p",
+     xlab = paste("PCoA I (",round(var.expl[1]*100,1),"%)" ),
+     ylab = paste("PCoA II (",round(var.expl[2]*100,1),"%)" ), main=main,
+     col="black", bg=col, cex=1.5,xaxt="n",yaxt="n", bty="n")
+axis(1, at = seq(-.5,1, by=.25))
+axis(2, at = seq(.25,-1, by=-.25))
+legend(.5,-.85, pch=c(21,21, NA),lty=c(NA,NA,1), lwd=c(NA, NA, 2), col = c("black","black", "orange"), 
+       pt.bg =  c("gray","red", NA), cex=1.5
+       , legend=c("Pre 85k", "Post 85k", "Lake Level"))
 
 ## ordination surfaces
 # vegan::ordisurf(x = poln.ord,
@@ -97,42 +105,48 @@ text(poln.ord$points, labels = round(age), cex = 0.5, col = col)
 #                 add = TRUE,
 #                 col = "gray",
 #                 nlevels = 50)
-vegan::ordisurf(x = poln.ord, y = lake,
+lake.surf<-vegan::ordisurf(x = poln.ord, y = lake,
                 main = "Lake Level", 
-                add = TRUE, 
+                plot = FALSE, 
                 col = "orange", 
                 nlevels = 50, 
-                knots = 30)
+                )
+plot(lake.surf,add=T, col="orange", nlevels = 50, knots = 30)
 # vegan::ordisurf(x = poln.ord,
 #                 y = astr,
 #                 main = "Asteraceae")
+plot(poln.fit, col = "dark green", add=T, lwd=3)
+plot(add.fit, col = "blue", add=T)
+#text(poln.ord$points, labels = round(age), cex = 0.5, col = col)
 
 ##########################################
 # MANOVA
 
 # our raw data are pollen, charcoal, and lake level
-data.raw <- data.frame(poln, char, lake)
+# EOC: we use the n-1 column of scores of the PCoA, because the nth eigenvalue is 0, and the scores are redundant
+data.raw <- data.frame(poln.ord$points[,1:3], char, lake)
 
 # scale the raw data
 data.scl <- scale(data.raw)
 
-# calculate the euclidean distance matrix of our scaled data
-data.scl.dist <- dist(data.scl) 
-
-# perform our PCoA on the distance matrix and keep the eigenvalues
-data.scl.dist.pcoa <- cmdscale(d = data.scl.dist, k = 2, eig = T)
-data.scl.dist.pcoa.eig <- data.scl.dist.pcoa$eig
-
-# find the euclidean distance matrix of the resulting points
-data.scl.dist.pcoa.dist <- vegan::vegdist(x = data.scl.dist.pcoa$points,
-                                          method = "euclidean")
+# EOC: the data in data.raw should already be euclidean, so the rest of this is superfluous
+# # calculate the euclidean distance matrix of our scaled data
+# data.scl.dist <- dist(data.scl) 
+# 
+# # perform our PCoA on the distance matrix and keep the eigenvalues
+# data.scl.dist.pcoa <- cmdscale(d = data.scl.dist, k = 3, eig = T)
+# data.scl.dist.pcoa.eig <- data.scl.dist.pcoa$eig
+# 
+# # find the euclidean distance matrix of the resulting points
+# data.scl.dist.pcoa.dist <- vegan::vegdist(x = data.scl.dist.pcoa$points,
+#                                           method = "euclidean")
 
 # binary indicator of age
 age.gt.85 <- 0 + (age > 85)
 
 # perform the MANOVA
-poln.manova <- vegan::adonis(formula = data.scl.dist.pcoa.dist ~ age.gt.85,
-                             method = "euclidean")
+poln.manova <- vegan::adonis(formula = data.raw ~ age.gt.85,
+                             method = "euclidean", permutations = 10000)
 
 poln.manova
 
