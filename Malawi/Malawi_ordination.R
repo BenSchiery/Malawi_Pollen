@@ -81,13 +81,15 @@ add.fit <- vegan::envfit(ord = poln.ord,
 col <- c("gray", "red")[1 + (age >= 85)]
 
 main<-"PCoA of Pollen: pollen and independent vectors fitted onto ordination"
-plot(poln.ord$points, pch = 21, type = "p",
+plot(poln.ord$points, pch = 21, type = "n",
      xlab = paste("PCoA I (",round(var.expl[1]*100,1),"%)" ),
      ylab = paste("PCoA II (",round(var.expl[2]*100,1),"%)" ), main=main,
      col="black", bg=col, cex=1.5,xaxt="n",yaxt="n", bty="n")
+
 axis(1, at = seq(-.5,1, by=.25))
 axis(2, at = seq(.25,-1, by=-.25))
-legend(.5,-.85, pch=c(21,21, NA),lty=c(NA,NA,1), lwd=c(NA, NA, 2), col = c("black","black", "orange"), 
+legend(.5,-.85, pch=c(21,21, NA),lty=c(NA,NA,1), lwd=c(NA, NA, 2)
+       , col = c("black","black", "light blue"), 
        pt.bg =  c("gray","red", NA), cex=1.5
        , legend=c("Pre 85k", "Post 85k", "Lake Level"))
 
@@ -111,20 +113,25 @@ lake.surf<-vegan::ordisurf(x = poln.ord, y = lake,
                 col = "orange", 
                 nlevels = 50, 
                 )
-plot(lake.surf,add=T, col="orange", nlevels = 50, knots = 30)
+plot(lake.surf,add=T, col="light blue", nlevels = 50, knots = 30)
 # vegan::ordisurf(x = poln.ord,
 #                 y = astr,
 #                 main = "Asteraceae")
+
+# points(poln.ord$points, pch = 21,
+#        xlab = paste("PCoA I (",round(var.expl[1]*100,1),"%)" ),
+#        ylab = paste("PCoA II (",round(var.expl[2]*100,1),"%)" ),
+#        col="black", bg=col, cex=1.5,xaxt="n",yaxt="n", bty="n")
 plot(poln.fit, col = "dark green", add=T, lwd=3)
-plot(add.fit, col = "blue", add=T)
-#text(poln.ord$points, labels = round(age), cex = 0.5, col = col)
+plot(add.fit, col = "orange", add=T)
+text(poln.ord$points, labels = round(age), cex = 0.5, col = col)
 
 ##########################################
 # MANOVA
 
 # our raw data are pollen, charcoal, and lake level
 # EOC: we use the n-1 column of scores of the PCoA, because the nth eigenvalue is 0, and the scores are redundant
-data.raw <- data.frame(poln.ord$points[,1:3], char, lake)
+data.raw <- data.frame(poln.ord$points[,1:3], lake)
 
 # scale the raw data
 data.scl <- scale(data.raw)
