@@ -3,6 +3,7 @@ graphics.off()
 
 library(vegan)
 library(MASS)
+library(svglite)
 
 # load the pollen data
 poln.full <- read.csv("./data/20200626_pollen.csv")
@@ -164,8 +165,116 @@ poln.manova <- vegan::adonis(formula = data.raw ~ age.gt.85,
 
 poln.manova
 
+####################################
+#### plot components separately ####
+####################################
 
+## Title and axes
+svglite::svglite(file = "./pictures/vector_graphics/axes.svg")
 
+main <- "PCoA of Pollen: pollen and independent vectors fitted onto ordination"
+plot(poln.ord$points, pch = 21, type = "n",
+     xlab = paste0("PCoA I (", round(var.expl[1] * 100, 1), "%)"),
+     ylab = paste0("PCoA II (", round(var.expl[2] * 100, 1), "%)"), main = main,
+     col = "black", bg = col, cex = 1.5, xaxt = "n", yaxt = "n", bty = "n")
 
+axis(1, at = seq(-0.5, 1, by = 0.25))
+axis(2, at = seq(-1, 0.25, by = 0.25))
+dev.off()
 
+## Legend
+svglite::svglite(file = "./pictures/vector_graphics/legend.svg")
 
+plot(x = 0, y = 0, type = "n", 
+     xlab = NA, ylab = NA, 
+     xlim = c(-1,1), ylim = c(-1,1),
+     axes = F)
+legend(-1, 1, 
+       pch = c(21, 21, NA), 
+       lty = c(NA, NA, 1), 
+       lwd = c(NA, NA, 2), 
+       col = c("black", "black", "light blue"), 
+       pt.bg =  c("gray","red", NA), 
+       cex = 1.5, 
+       legend = c("Post 85k", "Pre 85k", "Lake Level"))
+dev.off()
+
+## Ordination surface
+svglite::svglite(file = "./pictures/vector_graphics/ordination_surface.svg")
+
+plot(poln.ord$points, type = "n",
+     xlab = NA, ylab = NA,
+     axes = F)
+lake.surf <- vegan::ordisurf(x = poln.ord, y = lake,
+                             main = "Lake Level", 
+                             plot = FALSE, 
+                             col = "light blue", 
+                             nlevels = 50)
+plot(lake.surf, add = T, col = "light blue", nlevels = 50, knots = 30)
+dev.off()
+
+## Pollen vector fit
+### with labels
+svglite::svglite(file = "./pictures/vector_graphics/pollen_vec_fit.svg")
+
+plot(poln.ord$points, type = "n",
+     xlab = NA, ylab = NA,
+     axes = F)
+plot(poln.fit, col = "dark green", add = T, lwd = 3)
+dev.off()
+
+### without labels
+svglite::svglite(file = "./pictures/vector_graphics/pollen_vec_fit_noLabels.svg")
+
+plot(poln.ord$points, type = "n",
+     xlab = NA, ylab = NA,
+     axes = F)
+plot(poln.fit, col = "dark green", add = T, lwd = 3, labels = NA)
+dev.off()
+
+## Additional variable vector fits
+### with labels
+svglite::svglite(file = "./pictures/vector_graphics/additional_vec_fit.svg")
+
+plot(poln.ord$points, type = "n",
+     xlab = NA, ylab = NA,
+     axes = F)
+plot(add.fit, col = "orange", add = T)
+dev.off()
+
+### without labels
+svglite::svglite(file = "./pictures/vector_graphics/additional_vec_fit_noLabels.svg")
+
+plot(poln.ord$points, type = "n",
+     xlab = NA, ylab = NA,
+     axes = F)
+plot(add.fit, col = "orange", add = T, labels = NA)
+dev.off()
+
+## Data points
+### as ages
+svglite::svglite(file = "./pictures/vector_graphics/data_pts_asAges.svg")
+
+plot(poln.ord$points, type = "n",
+     xlab = NA, ylab = NA,
+     axes = F)
+text(poln.ord$points, labels = round(age), cex = 0.5, col = col)
+dev.off()
+
+### as dots 1
+svglite::svglite(file = "./pictures/vector_graphics/data_pts_asDots1.svg")
+
+plot(poln.ord$points, type = "n",
+     xlab = NA, ylab = NA,
+     axes = F)
+points(poln.ord$points, pch = 21, cex = 0.5, col = "black", bg = col)
+dev.off()
+
+### as dots 2
+svglite::svglite(file = "./pictures/vector_graphics/data_pts_asDots2.svg")
+
+plot(poln.ord$points, type = "n",
+     xlab = NA, ylab = NA,
+     axes = F)
+points(poln.ord$points, pch = 19, cex = 0.5, col = col)
+dev.off()
