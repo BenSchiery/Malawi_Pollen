@@ -1,0 +1,81 @@
+###Ordination Methods covered in class
+
+rm(list=ls())
+options(scipen=17)
+setwd("E:/Dropbox/Purdue/Courses/spring_2016/ANTH606/Labs")
+Howells<-read.csv("Howellcraniadata.csv",header=T)
+
+dim(Howells)
+colnames(Howells)
+head(Howells)
+
+table((Howells[,4]))
+Howells<-Howells[which(Howells[,4]=="NORSE" | Howells[,4]=="PERU" | Howells[,4]=="ESKIMO"),]
+
+Howells.data<-as.matrix(Howells[,(5:46)]) # matrix of linear measurements
+dim(Howells.data)
+colnames(Howells.data)
+head(Howells.data)
+tail(Howells.data)
+sex<-as.factor(Howells[,2])
+pop<-as.factor(as.character(Howells[,4]))
+SexBypop<-as.factor(paste(sex,pop))
+Howells.data<-log(Howells.data)
+Y<-Howells.data[,-1]
+cranilen<-Howells.data[,1] # GOL =Maximum cranial length | Glabello-occipital length
+pop
+# let's prep some colors
+colo<-rep("blue",nrow(Howells.data)); 
+colo[which(SexBypop == 'F NORSE')]<-"red";
+colo[which(SexBypop == 'M NORSE')]<-"pink"; 
+colo[which(SexBypop == 'M PERU')]<-"lightblue";
+colo[which(SexBypop == 'F ESKIMO')]<-"green"; 
+colo[which(SexBypop == 'M ESKIMO')]<-"dark green";
+########################
+#	PCA: Principal Components Analysis
+
+pca.Howells<-prcomp(Howells.data)  #uses SVD for computations (mean-centered is default)
+summary(pca.Howells)
+PC.scores<-pca.Howells$x
+plot(PC.scores,xlab="PC I", ylab="PC II",asp=1,pch=21,bg=colo,cex = 1.5)
+
+### PCA via svd
+svd.res<-svd(Howells.data)  
+svd.res$d^2/sum(svd.res$d^2)   #same % variation per PC axis
+  pc.scores.svd<-svd.res$u%*%diag(svd.res$d)  #PCA scores
+plot(pc.scores.svd,col=colo,pch=19,bg=colo,cex = 1.5)
+
+#### PCA "by hand" via eigen-analysis
+vcv.Howells<-var(Howells.data)	#Calculate PC axes
+pc.Howells<-eigen(vcv.Howells) 
+pc.Howells$values/sum(pc.Howells$values)   #same % variation per PC axis
+pc.scores<-Howells.data%*%pc.Howells$vectors	#Projection
+plot(pc.scores,xlab="PC I", ylab="PC II",asp=1,pch=21,bg=colo,cex = 1.5) #colored by group
+    #note, axes CAN BE reflected (flipped, mirrored) and still retain correct information  
+
+#############Biplot with PCA
+biplot(pca.Howells)
+
+###########################
+# 	PCoA
+library(vegan)
+Howells.dist<-dist(Howells.data)
+Howells.PCoA<-cmdscale(Howells.dist)
+plot(Howells.PCoA,pch=21,bg=colo,cex=1.5,asp=1)
+
+#############################
+#	NMDS
+
+#use Howells.PCoA as starting values
+Howells.nmds<- metaMDS(Howells.PCoA, k=3, distance='euclidean', autotransform=F)
+Howells.new<-as.matrix(Howells.nmds$points)
+plot(Howells.new,pch=21,bg=colo,cex=1.5,asp=1,xlab="NMDS 1", ylab="NMDS 2")
+
+###########################
+### CVA
+library(MASS)
+lda.Howells<-lda(Howells.data,colo)
+cva.Howells<-predict(lda.Howells,Howells.data)
+cv.scores<-cva.Howells$x
+plot(cv.scores,pch=21,bg=colo,cex=1.5,asp=1)
+## check differences between CVA and PCA plots
