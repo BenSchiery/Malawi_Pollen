@@ -1,0 +1,7 @@
+library(readxl)
+file<-read_excel(path="C:\\Users\\eotarola.BOILERAD\\Google Drive\\Peru-Purdue\\Copy of Base de datos temporal_sitios cañete.xlsx",
+                 col_names = TRUE)
+file
+colnames(file)
+file$`Descripción*`
+file[1:4,1:4]
