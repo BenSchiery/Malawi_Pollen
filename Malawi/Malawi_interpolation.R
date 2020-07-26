@@ -6,7 +6,7 @@
 rm(list = ls())
 graphics.off()
 
-library(fields) # for Krigging functions
+# library(fields) # for Krigging functions
 
 linterp <- function(x, y, x.out){
   bad <- is.na(x) | is.na(y)
@@ -41,11 +41,11 @@ linterp <- function(x, y, x.out){
   return(y.out)
 }
 
-pollenData <- read.csv("./data/20200626_pollen.csv")
-lakeData <- read.csv("./data/20200626_lake.csv")[,1:2]
-charcoalData <- read.csv("./data/20200626_charcoal.csv")[,1:2]
+pollenData <- read.csv("./data/20200722_pollen.csv")
+lakeData <- read.csv("./data/20200722_lake.csv")
+charcoalData <- read.csv("./data/20200722_charcoal.csv")
 
-colnames(pollenData)
+colnames(pollenData)[1] <- "age"
 colnames(lakeData) <- c("age", "lake")
 colnames(charcoalData) <- c("age", "charcoal")
 
@@ -150,7 +150,7 @@ lines(lake.linterp.pred ~ pollenData$age, lwd = 1, col = "red")
 charcoalData.linterp <- data.frame("age" = pollenData$age,
                                    "charcoal" = char.linterp.pred)
 write.table(x = charcoalData.linterp, 
-            file = "./data/char_linterp.csv", 
+            file = "./data/20200722_char_linterp.csv", 
             row.names = F, 
             col.names = T, 
             sep = ",")
@@ -166,7 +166,7 @@ write.table(x = charcoalData.Krig,
 lakeData.linterp <- data.frame("age" = pollenData$age,
                                "lake" = lake.linterp.pred)
 write.table(x = lakeData.linterp, 
-            file = "./data/lake_linterp.csv", 
+            file = "./data/20200722_lake_linterp.csv", 
             row.names = F, 
             col.names = T, 
             sep = ",")
