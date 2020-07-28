@@ -43,6 +43,12 @@ poln.dist <- dist(poln.std)
 
 # make the pollen ordination
 poln.ord <- cmdscale(d = poln.dist, k = 4, eig = T, add = F, x.ret = F)
+write.table(x = data.frame("age" = poln.full$Pollen.Age,
+                           poln, 
+                           "PCoA_Component" = poln.ord$points), 
+            file = "./data/pollen_ordination.csv", 
+            row.names = F,
+            sep = ",")
 
 # get the proportion of the variation explained by each component
 var.expl <- poln.ord$eig[1:3] / sum(poln.ord$eig[1:3])
