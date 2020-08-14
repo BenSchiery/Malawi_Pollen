@@ -1,6 +1,10 @@
 {
-    "path" : "C:/Users/eotarola.BOILERAD/Downloads/Malawi",
+    "path" : "E:/Dropbox (LCA)/Documents/bitbucket/EOC_BEN/Malawi",
     "sortOrder" : [
+        {
+            "ascending" : false,
+            "columnIndex" : 4
+        },
         {
             "ascending" : true,
             "columnIndex" : 2
