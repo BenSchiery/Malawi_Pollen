@@ -1,6 +1,8 @@
 rm(list = ls())
 graphics.off()
 
+library(openxlsx)
+
 linterp <- function(x, y, x.out){
   bad <- is.na(x) | is.na(y)
   X <- x[!bad]
@@ -46,3 +48,14 @@ MSdownsampled <- cbind("age" = char$age,
                                                   x.out = char$age))
 
 write.table(x = MSdownsampled, file = "./data/MagSusDownsampled.csv", row.names = F, sep = ",")
+
+core2a_Charcoal <- read.xlsx(xlsxFile = "./data/Core2A_MagSusCharcoal.xlsx", sheet = 1)
+core2a_MagSus <- read.xlsx(xlsxFile = "./data/Core2A_MagSusCharcoal.xlsx", sheet = 2)
+core2a_downsampled <- cbind("Depth" = core2a_Charcoal$Depth,
+                            "MS_downsampled" = linterp(x = core2a_MagSus$Depth,
+                                                       y = core2a_MagSus$MagSus,
+                                                       x.out = core2a_Charcoal$Depth))
+write.table(x = core2a_downsampled, 
+            file = "./data/Core2A_MagSusDownsampled.csv", 
+            row.names = F, 
+            sep = ",")
