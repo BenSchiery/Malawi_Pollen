@@ -12,7 +12,7 @@ linterp <- function(x, y, x.out){
   X.min <- X[1]
   X.max <- X[data.length]
   Y.min <- Y[1]
-  Y.max <- Y[data.length] # which.max takes the first instance, so we have to reverse
+  Y.max <- Y[data.length]
   
   n.out <- length(x.out)
   y.out <- numeric(n.out)
@@ -53,7 +53,7 @@ lines(y = y.linterp[order(x.linterp)],
       x = x.linterp[order(x.linterp)], 
       col = "red")
 
-# test case 2: some
+# test case 2
 x <- c(1,2,2,3,3,4,4,5,5)
 y <- c(1,1,2,2,2,3,4,5,6)
 

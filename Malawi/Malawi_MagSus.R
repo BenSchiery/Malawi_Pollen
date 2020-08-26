@@ -15,7 +15,7 @@ linterp <- function(x, y, x.out){
   X.min <- X[1]
   X.max <- X[data.length]
   Y.min <- Y[1]
-  Y.max <- Y[data.length] # which.max takes the first instance, so we have to reverse
+  Y.max <- Y[data.length]
   
   n.out <- length(x.out)
   y.out <- numeric(n.out)

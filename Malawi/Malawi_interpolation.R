@@ -20,7 +20,7 @@ linterp <- function(x, y, x.out){
   X.min <- X[1]
   X.max <- X[data.length]
   Y.min <- Y[1]
-  Y.max <- Y[data.length] # which.max takes the first instance, so we have to reverse
+  Y.max <- Y[data.length]
   
   n.out <- length(x.out)
   y.out <- numeric(n.out)
@@ -63,56 +63,56 @@ tail(charcoalData)
 #################################
 
 # index of the smallest charcoal age greater than the greatest pollen age
-last.age.char <- min(which(charcoalData$age > max(pollenData$age)))
+# last.age.char <- min(which(charcoalData$age > max(pollenData$age)))
 # truncate the charcoal data to just what is needed
-char.trunc <- charcoalData[1:last.age.char,]
+# char.trunc <- charcoalData[1:last.age.char,]
 # make a 1-D Krig model of the charcoal data
-char.Krig <- fields::Krig(x = matrix(char.trunc$age, ncol = 1), 
-                          Y = matrix(char.trunc$charcoal, ncol = 1))
+# char.Krig <- fields::Krig(x = matrix(char.trunc$age, ncol = 1), 
+#                           Y = matrix(char.trunc$charcoal, ncol = 1))
 # predict the charcoal values at the pollen ages
-char.Krig.pred <- fields::predict.Krig(object = char.Krig,
-                                       x = pollenData$age)
+# char.Krig.pred <- fields::predict.Krig(object = char.Krig,
+#                                        x = pollenData$age)
 
-plot(char.trunc, type = "l", lwd = 2, main = "Charcoal Krig Interpolation")
-lines(char.Krig.pred ~ pollenData$age, lwd = 1, col = "red")
+# plot(char.trunc, type = "l", lwd = 2, main = "Charcoal Krig Interpolation")
+# lines(char.Krig.pred ~ pollenData$age, lwd = 1, col = "red")
 
 # index of the smallest lake level age greater than the greatest pollen age
-last.age.lake <- min(which(lakeData$age > max(pollenData$age)))
+# last.age.lake <- min(which(lakeData$age > max(pollenData$age)))
 # truncate the lake level data to just what is needed
-lake.trunc <- lakeData[1:last.age.lake,]
+# lake.trunc <- lakeData[1:last.age.lake,]
 # make a 1-D Krig model of the lake level data
-lake.Krig <- fields::Krig(x = matrix(lake.trunc$age, ncol = 1),
-                          Y = matrix(lake.trunc$lake, ncol = 1))
+# lake.Krig <- fields::Krig(x = matrix(lake.trunc$age, ncol = 1),
+#                           Y = matrix(lake.trunc$lake, ncol = 1))
 # predict the lake level values at pollen ages
-lake.Krig.pred <- fields::predict.Krig(object = lake.Krig, 
-                                       x = pollenData$age)
+# lake.Krig.pred <- fields::predict.Krig(object = lake.Krig, 
+#                                        x = pollenData$age)
 
-plot(lake.trunc, type = "l", lwd = 2, main = "Lake Level Krig Interpolation")
-lines(lake.Krig.pred ~ pollenData$age, lwd = 1, col = "red")
+# plot(lake.trunc, type = "l", lwd = 2, main = "Lake Level Krig Interpolation")
+# lines(lake.Krig.pred ~ pollenData$age, lwd = 1, col = "red")
 
 ######################################
 #### interpolate by cubic splines ####
 ######################################
 
 # index of the smallest charcoal age greater than the greatest pollen age
-last.age.char <- min(which(charcoalData$age > max(pollenData$age)))
+# last.age.char <- min(which(charcoalData$age > max(pollenData$age)))
 # truncate the charcoal data to just what is needed
-char.trunc <- charcoalData[1:last.age.char,]
+# char.trunc <- charcoalData[1:last.age.char,]
 # interpolate by a cubic spline
-char.spline.pred <- spline(x = char.trunc, xout = pollenData$age)[[2]]
+# char.spline.pred <- spline(x = char.trunc, xout = pollenData$age)[[2]]
 
-plot(char.trunc, type = "l", lwd = 2, main = "Charcoal Spline Interpolation")
-lines(char.spline.pred ~ pollenData$age, lwd = 1, col = "red")
+# plot(char.trunc, type = "l", lwd = 2, main = "Charcoal Spline Interpolation")
+# lines(char.spline.pred ~ pollenData$age, lwd = 1, col = "red")
 
 # index of the smallest lake level age greater than the greatest pollen age
-last.age.lake <- min(which(lakeData$age > max(pollenData$age)))
+# last.age.lake <- min(which(lakeData$age > max(pollenData$age)))
 # truncate the lake level data to just what is needed
-lake.trunc <- lakeData[1:last.age.lake,]
+# lake.trunc <- lakeData[1:last.age.lake,]
 # interpolate by a cubic spline
-lake.spline.pred <- spline(x = lake.trunc, xout = pollenData$age)[[2]]
+# lake.spline.pred <- spline(x = lake.trunc, xout = pollenData$age)[[2]]
 
-plot(lake.trunc, type = "l", lwd = 2, main = "Lake Level Spline Iterpolation")
-lines(lake.spline.pred ~ pollenData$age, lwd = 1, col = "red")
+# plot(lake.trunc, type = "l", lwd = 2, main = "Lake Level Spline Iterpolation")
+# lines(lake.spline.pred ~ pollenData$age, lwd = 1, col = "red")
 
 ##############################
 #### interpolate linearly ####
@@ -155,13 +155,13 @@ write.table(x = charcoalData.linterp,
             col.names = T, 
             sep = ",")
 
-charcoalData.Krig <- data.frame("age" = pollenData$age,
-                                "charcoal" = char.Krig.pred)
-write.table(x = charcoalData.Krig, 
-            file = "./data/char_Krig.csv", 
-            row.names = F, 
-            col.names = T, 
-            sep = ",")
+# charcoalData.Krig <- data.frame("age" = pollenData$age,
+#                                 "charcoal" = char.Krig.pred)
+# write.table(x = charcoalData.Krig, 
+#             file = "./data/char_Krig.csv", 
+#             row.names = F, 
+#             col.names = T, 
+#             sep = ",")
 
 lakeData.linterp <- data.frame("age" = pollenData$age,
                                "lake" = lake.linterp.pred)
@@ -171,10 +171,10 @@ write.table(x = lakeData.linterp,
             col.names = T, 
             sep = ",")
 
-lakeData.Krig <- data.frame("age" = pollenData$age,
-                            "lake" = lake.Krig.pred)
-write.table(x = lakeData.Krig, 
-            file = "./data/lake_Krig.csv", 
-            row.names = F, 
-            col.names = T, 
-            sep = ",")
+# lakeData.Krig <- data.frame("age" = pollenData$age,
+#                             "lake" = lake.Krig.pred)
+# write.table(x = lakeData.Krig, 
+#             file = "./data/lake_Krig.csv", 
+#             row.names = F, 
+#             col.names = T, 
+#             sep = ",")
