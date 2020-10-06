@@ -38,9 +38,9 @@ linterp <- function(x, y, x.out){
   return(y.out)
 }
 
-pollenData <- read.csv("./data/20200722_pollen.csv")
-lakeData <- read.csv("./data/20200722_lake.csv")
-charcoalData <- read.csv("./data/20200722_charcoal.csv")
+pollenData <- read.csv("./data_input/20200722_pollen.csv")
+lakeData <- read.csv("./data_input/20200722_lake.csv")
+charcoalData <- read.csv("./data_input/20200722_charcoal.csv")
 
 colnames(pollenData)[1] <- "age"
 colnames(lakeData) <- c("age", "lake")
@@ -90,7 +90,7 @@ lines(lake.linterp.pred ~ pollenData$age, lwd = 1, col = "red")
 charcoalData.linterp <- data.frame("age" = pollenData$age,
                                    "charcoal" = char.linterp.pred)
 write.table(x = charcoalData.linterp, 
-            file = "./data/20200722_char_linterp.csv", 
+            file = "./data_output/20200722_char_linterp.csv", 
             row.names = F, 
             col.names = T, 
             sep = ",")

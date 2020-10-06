@@ -6,11 +6,11 @@ library(MASS)
 library(svglite)
 
 # load the pollen data
-poln.full <- read.csv("./data/20200722_pollen.csv")
+poln.full <- read.csv("./data_input/20200722_pollen.csv")
 
-## linearly interpolated data:
-lake.full <- read.csv("./data/20200722_lake_linterp.csv")
-char.full <- read.csv("./data/20200722_char_linterp.csv")
+# linearly interpolated data:
+lake.full <- read.csv("./data_output/20200722_lake_linterp.csv")
+char.full <- read.csv("./data_output/20200722_char_linterp.csv")
 
 # split the loaded data to mix and match as needed
 age <- lake.full[,"age"] # everything should have the same ages
@@ -38,7 +38,7 @@ poln.ord <- cmdscale(d = poln.dist, k = 4, eig = T, add = F, x.ret = F)
 write.table(x = data.frame("age" = poln.full$Pollen.Age,
                            poln, 
                            "PCoA_Component" = poln.ord$points), 
-            file = "./data/pollen_ordination.csv", 
+            file = "./data_output/pollen_ordination.csv", 
             row.names = F,
             sep = ",")
 
@@ -114,7 +114,7 @@ poln.manova
 ####################################
 
 ## Title and axes
-svglite::svglite(file = "./pictures/vector_graphics/axes.svg")
+svglite::svglite(file = "./vector_graphics/axes.svg")
 
 main <- "PCoA of Pollen: pollen and independent vectors fitted onto ordination"
 plot(poln.ord$points, pch = 21, type = "n",
@@ -127,7 +127,7 @@ axis(2, at = seq(-1, 0.25, by = 0.25))
 dev.off()
 
 ## Legend
-svglite::svglite(file = "./pictures/vector_graphics/legend.svg")
+svglite::svglite(file = "./vector_graphics/legend.svg")
 
 plot(x = 0, y = 0, type = "n", 
      xlab = NA, ylab = NA, 
@@ -144,7 +144,7 @@ legend(-1, 1,
 dev.off()
 
 ## Ordination surface
-svglite::svglite(file = "./pictures/vector_graphics/ordination_surface.svg")
+svglite::svglite(file = "./vector_graphics/ordination_surface.svg")
 
 plot(poln.ord$points, type = "n",
      xlab = NA, ylab = NA,
@@ -159,7 +159,7 @@ dev.off()
 
 ## Pollen vector fit
 ### with labels
-svglite::svglite(file = "./pictures/vector_graphics/pollen_vec_fit.svg")
+svglite::svglite(file = "./vector_graphics/pollen_vec_fit.svg")
 
 plot(poln.ord$points, type = "n",
      xlab = NA, ylab = NA,
@@ -168,7 +168,7 @@ plot(poln.fit, col = "dark green", add = T, lwd = 3)
 dev.off()
 
 ### without labels
-svglite::svglite(file = "./pictures/vector_graphics/pollen_vec_fit_noLabels.svg")
+svglite::svglite(file = "./vector_graphics/pollen_vec_fit_noLabels.svg")
 
 plot(poln.ord$points, type = "n",
      xlab = NA, ylab = NA,
@@ -178,7 +178,7 @@ dev.off()
 
 ## Additional variable vector fits
 ### with labels
-svglite::svglite(file = "./pictures/vector_graphics/additional_vec_fit.svg")
+svglite::svglite(file = "./vector_graphics/additional_vec_fit.svg")
 
 plot(poln.ord$points, type = "n",
      xlab = NA, ylab = NA,
@@ -187,7 +187,7 @@ plot(add.fit, col = "orange", add = T)
 dev.off()
 
 ### without labels
-svglite::svglite(file = "./pictures/vector_graphics/additional_vec_fit_noLabels.svg")
+svglite::svglite(file = "./vector_graphics/additional_vec_fit_noLabels.svg")
 
 plot(poln.ord$points, type = "n",
      xlab = NA, ylab = NA,
@@ -197,7 +197,7 @@ dev.off()
 
 ## Data points
 ### as ages
-svglite::svglite(file = "./pictures/vector_graphics/data_pts_asAges.svg")
+svglite::svglite(file = "./vector_graphics/data_pts_asAges.svg")
 
 plot(poln.ord$points, type = "n",
      xlab = NA, ylab = NA,
@@ -206,7 +206,7 @@ text(poln.ord$points, labels = round(age), cex = 0.5, col = col)
 dev.off()
 
 ### as dots 1
-svglite::svglite(file = "./pictures/vector_graphics/data_pts_asDots1.svg")
+svglite::svglite(file = "./vector_graphics/data_pts_asDots1.svg")
 
 plot(poln.ord$points, type = "n",
      xlab = NA, ylab = NA,
@@ -215,7 +215,7 @@ points(poln.ord$points, pch = 21, cex = 0.5, col = "black", bg = col)
 dev.off()
 
 ### as dots 2
-svglite::svglite(file = "./pictures/vector_graphics/data_pts_asDots2.svg")
+svglite::svglite(file = "./vector_graphics/data_pts_asDots2.svg")
 
 plot(poln.ord$points, type = "n",
      xlab = NA, ylab = NA,
